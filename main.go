@@ -10,23 +10,22 @@ import (
 
 const (
 	WIKIPEDIA_URI = "https://en.wikipedia.org/wiki/List_of_counties_by_U.S._state"
-	TABLE_STATE   = "state"
-	TABLE_COUNTY  = "county"
+	TABLE_STATE   = "states"
+	TABLE_COUNTY  = "counties"
 )
 
 var createStatesTable = `drop table if exists %s;
 create table %s (
 	id int unsigned not null auto_increment,
-	name varchar(250) not null,
-	primary key(id),
-	unique index name_unique (name asc)
+	name varchar(50) not null,
+	primary key(id)
 ) Engine = InnoDB;`
 
 var createCountiesTable = `drop table if exists %s;
 create table %s (
 	state_id int unsigned not null,
 	id int unsigned not null auto_increment,
-	name varchar(250) not null,
+	name varchar(50) not null,
 	primary key (id, state_id),
 	foreign key (state_id) references %s(id)
 ) Engine = InnoDB;`
