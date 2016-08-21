@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"os"
 	"regexp"
 	"strings"
 
@@ -30,8 +32,10 @@ create table %s (
 	foreign key (state_id) references %s(id)
 ) Engine = InnoDB;`
 
-var insertStateStatement = `insert into %s(id, name) values(%v, "%s");`
-var insertCountyStatement = `insert into %s(state_id, name) values(%v, "%s");`
+var (
+	insertStateStatement  = "insert into %s(id, name) values(%v, %q);\n"
+	insertCountyStatement = "insert into %s(state_id, name) values(%v, %q);\n"
+)
 
 var (
 	reTitles       = regexp.MustCompile(`<li><a href="(.*)" title="(.*)">(.*)<\/a>`)
@@ -42,11 +46,7 @@ var (
 	stateCounty    = make(map[string][]string, 0)
 	tmplIterator   = 0
 
-	suffixes = []string{
-		"County",
-		"Census Area",
-		"Borough",
-	}
+	suffixes = []string{"County", "Census Area", "Borough"}
 
 	prefixes = []string{
 		"Consolidated Municipality of",
@@ -105,23 +105,25 @@ func main() {
 		stateCounty[state] = append(stateCounty[state], county)
 	}
 
-	fmt.Printf(createStatesTable, TABLE_STATE, TABLE_STATE)
-	fmt.Printf("\n\n")
+	var buf bytes.Buffer
 
-	fmt.Printf(createCountiesTable, TABLE_COUNTY, TABLE_COUNTY, TABLE_STATE)
-	fmt.Printf("\n\n")
+	fmt.Fprintf(&buf, createStatesTable, TABLE_STATE, TABLE_STATE)
+	fmt.Fprintf(&buf, "\n\n")
+
+	fmt.Fprintf(&buf, createCountiesTable, TABLE_COUNTY, TABLE_COUNTY, TABLE_STATE)
+	fmt.Fprintf(&buf, "\n\n")
 
 	iterator := 1
 	for state, counties := range stateCounty {
-		fmt.Printf(insertStateStatement, TABLE_STATE, iterator, state)
-		fmt.Printf("\n")
+		fmt.Fprintf(&buf, insertStateStatement, TABLE_STATE, iterator, state)
 
 		for _, county := range counties {
-			fmt.Printf(insertCountyStatement, TABLE_COUNTY, iterator, county)
-			fmt.Printf("\n")
+			fmt.Fprintf(&buf, insertCountyStatement, TABLE_COUNTY, iterator, county)
 		}
 
 		iterator++
-		fmt.Printf("\n")
+		fmt.Fprintln(&buf, "")
 	}
+
+	fmt.Fprintln(os.Stdout, buf.String())
 }
