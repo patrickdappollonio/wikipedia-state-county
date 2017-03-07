@@ -18,7 +18,7 @@ go get github.com/patrickdappollonio/wikipedia-state-county
 cd $GOPATH/src/github.com/patrickdappollonio/wikipedia-state-county
 
 # execute the program and send the output to the clipboard
-go run main.go | pbcopy
+go run main.go > output.sql
 ```
 
 ### Forks? Issues? Improvements?
