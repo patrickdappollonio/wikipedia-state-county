@@ -1,0 +1,13 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "n25vuAkZbpXDMGrutoefN+b4g+M=",
+			"path": "github.com/franela/goreq",
+			"revision": "fc08df6ca2d4a0d1a5ae24739aa268863943e723",
+			"revisionTime": "2016-05-08T00:03:57Z"
+		}
+	],
+	"rootPath": "github.com/patrickdappollonio/wikipedia-state-county"
+}
